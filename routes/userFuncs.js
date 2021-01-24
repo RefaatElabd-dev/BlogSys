@@ -33,13 +33,25 @@ router.post('/follow', async (req, res, next)=>{
 })
 
 router.get('/', async (req, res, next)=>{
-    const { query: { id: neededID, tag } } = req;
+    const { query: { id: neededID, tag, user } } = req;
     try {
-        const results = await search({ neededID, tag });
+        const results = await search({ neededID, tag, user });
         res.json(results);
     } catch (e) {
         next(e);
     }
 })
 
+router.get('/user', async (req, res, next)=>{
+    const { query: { id: neededID } } = req;
+    try {
+        const results = await searchUser(neededID);
+        res.json(results);
+    } catch (e) {
+        next(e);
+    }
+})
+
+
 module.exports = router;
+

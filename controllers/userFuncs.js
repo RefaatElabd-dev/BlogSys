@@ -31,9 +31,13 @@ const follow = async ({ id, f_id }) => {
     return {...user, flag: flag};
 }
 
-const search = async ({ neededID, tag }) => {
+const search = async ({ neededID, tag, user }) => {
     if (!(neededID || tag))
-        throw Error('Enter query of id or tag '); 
+    {// return blogs of user who he is following
+        const users = await User.find({ '_id': { $in: user.followers } }).exec();
+        const blogs = await Blog.find({ userId: { $in: users } }).exec();
+        return blogs;
+    }
     else if (neededID && tag)
     {
         const user = await User.findOne({ _id: neededID }).exec();
@@ -43,18 +47,26 @@ const search = async ({ neededID, tag }) => {
         return { ...blogs, user };
     }
     else if (neededID)
-    {
+    {   // show other users with their bogs
         const user = await User.findOne({ _id: neededID }).exec();
-        return user;
+        const blogs = await Blog.find({ userId: user._id }).exec();
+        return { user, ...blogs };
     } else {
         const blogs = await Blog.find({ tags: tag }).exec();
         return blogs;
     }
 }
 
+const searchUser = async(neededID) => {
+    const user = await User.findOne({ _id: neededID }).exec();
+    const blogs = await Blog.find({ userId: user._id }).exec();
+    return { user, ...blogs };
+};
+
 module.exports = {
     edit,
     del,
     follow,
     search,
+    searchUser,
 }
