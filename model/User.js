@@ -10,6 +10,16 @@ const userSchema = new Schema({
         required: true,
         unique:true,
     },
+    Fname: {
+        type: String,
+        maxLength: 160,
+        required: true,
+    },
+    Lname: {
+        type: String,
+        maxLength: 160,
+        required: true,
+    },
     password: {
         type: String,
         maxLength: 256,

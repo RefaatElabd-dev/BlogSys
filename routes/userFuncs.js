@@ -2,6 +2,8 @@ const express = require('express');
 const { edit, del, follow, search } = require('../controllers/userFuncs');
 const router = express.Router();
 
+
+
 router.patch('/edit', async (req, res, next)=>{
     const { body, user: { id } } = req;
     try {
@@ -37,6 +39,15 @@ router.get('/', async (req, res, next)=>{
     try {
         const results = await search({ neededID, tag, user });
         res.json(results);
+    } catch (e) {
+        next(e);
+    }
+})
+
+router.get('/mypage',async (req, res, next)=>{
+    const { user } = req;
+    try {
+        res.json(user);
     } catch (e) {
         next(e);
     }
