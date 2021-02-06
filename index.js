@@ -5,13 +5,20 @@ const routes = require('./routes');
 const Blog = require('./model/Blog.js');
 
 const app = express();
+app.use(express.static('uploads'));
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET , PATCH , POST , DELETE");
+    res.header("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
+    next(); // Important
+})
 const { MONGODB_URI } = process.env;
 
 mongoose.connect(MONGODB_URI, { useUnifiedTopology: true });
 
 app.use(express.json());
-
+//home page / (get) returns blogs of last 2 days
 app.get('/',async (req,res,next)=>{
     try {
         // coms last 2 days blogs

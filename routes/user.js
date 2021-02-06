@@ -2,6 +2,7 @@ const express = require('express');
 const { create, login, getAll } = require('../controllers/user');
 const router = express.Router();
 
+//register /users  (by post) required:(Fname,Lname,username[unique],password,email) nonrequired:(dbo)
 router.post('/', async (req, res, next)=>{
     const { body } = req;
     try {
@@ -12,6 +13,7 @@ router.post('/', async (req, res, next)=>{
     }
 })
 
+
 router.get('/', async (req, res, next) => {
     try {
         const users = await getAll();
@@ -21,6 +23,7 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+//login : /users/login ==>required(username, password)
 router.post('/login', async (req, res, next)=>{
     const { body } = req;
     try {

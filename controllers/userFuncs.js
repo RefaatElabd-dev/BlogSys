@@ -30,43 +30,30 @@ const follow = async ({ id, f_id }) => {
     const user = await User.findOneAndUpdate({ _id: id }, { followers: followers }, { new: true }).exec();
     return {...user, flag: flag};
 }
-
-const search = async ({ neededID, tag, user }) => {
-    if (!(neededID || tag))
+// searching for blogs with {tag, title, author username}
+const searchBlog = async (searched) => {
+    if (!searched)
     {// return blogs of user who he is following
-        const users = await User.find({ '_id': { $in: user.followers } }).exec();
-        const blogs = await Blog.find({ userId: { $in: users } }).exec();
+        const blogs = {};
         return blogs;
     }
-    else if (neededID && tag)
+    else 
     {
-        const user = await User.findOne({ _id: neededID }).exec();
-        
-        const blogs = await Blog.find({ tags: tag }).exec();
-
-        return { ...blogs, user };
-    }
-    else if (neededID)
-    {   // show other users with their bogs
-        const user = await User.findOne({ _id: neededID }).exec();
-        const blogs = await Blog.find({ userId: user._id }).exec();
-        return { user, ...blogs };
-    } else {
-        const blogs = await Blog.find({ tags: tag }).exec();
+        const blogs = await Blog.find({ $or: [{ tags: new RegExp(searched, 'i') }, { title: new RegExp(searched, 'i') }, { author: new RegExp(searched, 'i') }] }).exec();
         return blogs;
     }
 }
-
-const searchUser = async(neededID) => {
-    const user = await User.findOne({ _id: neededID }).exec();
-    const blogs = await Blog.find({ userId: user._id }).exec();
-    return { user, ...blogs };
+//returns user & its blogs
+const searchUser = async(username) => {
+    const user = await User.findOne({username: username }).exec();
+    const blogs = await Blog.find({ author: username }).exec();
+    return [ user, ...blogs ];
 };
 
 module.exports = {
     edit,
     del,
     follow,
-    search,
+    searchBlog,
     searchUser,
 }

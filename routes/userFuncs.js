@@ -1,9 +1,9 @@
 const express = require('express');
-const { edit, del, follow, search } = require('../controllers/userFuncs');
+const { edit, del, follow, searchBlog, searchUser } = require('../controllers/userFuncs');
 const router = express.Router();
 
 
-
+// edit it's own data /Account/edit 
 router.patch('/edit', async (req, res, next)=>{
     const { body, user: { id } } = req;
     try {
@@ -14,6 +14,7 @@ router.patch('/edit', async (req, res, next)=>{
     }
 })
 
+// delete it's own account /Account/delete
 router.delete('/delete', async (req, res, next)=>{
     const { user: { id } } = req;
     try {
@@ -24,6 +25,8 @@ router.delete('/delete', async (req, res, next)=>{
     }
 })
 
+
+// user follow and unfollow anthor users : /Account/follow. return flag (follow or not)
 router.post('/follow', async (req, res, next)=>{
     const { body: { f_id }, user: { id } } = req;
     try {
@@ -34,16 +37,18 @@ router.post('/follow', async (req, res, next)=>{
     }
 })
 
+//searching/Account/(querystring)
 router.get('/', async (req, res, next)=>{
-    const { query: { id: neededID, tag, user } } = req;
+    const { query: { searched } } = req;
     try {
-        const results = await search({ neededID, tag, user });
+        const results = await searchBlog(searched);
         res.json(results);
     } catch (e) {
         next(e);
     }
 })
 
+//user self page /Account/mypage
 router.get('/mypage',async (req, res, next)=>{
     const { user } = req;
     try {
@@ -53,10 +58,11 @@ router.get('/mypage',async (req, res, next)=>{
     }
 })
 
+//user search about anthor users /Account/user/(Query string)  returns user & its blogs (body should contain username)
 router.get('/user', async (req, res, next)=>{
-    const { query: { id: neededID } } = req;
+    const { query: { username } } = req;
     try {
-        const results = await searchUser(neededID);
+        const results = await searchUser(username);
         res.json(results);
     } catch (e) {
         next(e);

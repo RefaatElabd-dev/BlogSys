@@ -1,6 +1,18 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const BlogComments = new this.schema({
+    username: {
+        type: String,
+        maxLength: 256,
+        required: true
+    },
+    comment:{
+        type: String,
+        required: true
+    }
+})
+
 const BlogSchema = new Schema({
     author: {
         type: String,
@@ -18,7 +30,11 @@ const BlogSchema = new Schema({
     },
     tags: [String],
     photo:{
-        type: String,
+        data: Buffer,
+        contentType: String
+    },
+    comments:{
+        type: [BlogComments],
     },
     createdAt: {
         type: Date,
